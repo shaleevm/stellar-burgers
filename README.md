@@ -1,3 +1,5 @@
+https://github.com/shaleevm/stellar-burgers
+
 # Стартер на TypeScript для проекта Stellar Burger
 
 ## Процедура создания коммита с проверками

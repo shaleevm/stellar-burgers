@@ -1,6 +1,5 @@
 import { LoginUI } from '@ui-pages';
 import { type SyntheticEvent, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 import { loginUser, selectUserError } from '@services/slices/user-slice';
 import { useDispatch, useSelector } from '@services/store';
@@ -10,21 +9,17 @@ export const Login = (): React.JSX.Element => {
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const error = useSelector(selectUserError);
-  const from = location.state?.from?.pathname || '/';
 
-  const handleSubmit = async (e: SyntheticEvent) => {
+  const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
 
-    try {
-      await dispatch(loginUser({ email, password })).unwrap();
-      navigate(from, { replace: true });
-    } catch (err) {
-      console.error('Ошибка входа:', err);
-    }
+    void dispatch(loginUser({ email, password }))
+      .unwrap()
+      .catch((err: unknown) => {
+        console.error('Ошибка входа:', err);
+      });
   };
 
   return (

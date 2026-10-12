@@ -4,7 +4,12 @@ import { useParams } from 'react-router-dom';
 
 import { selectFeedOrders, selectProfileOrders } from '@services/slices/feed-slice';
 import { selectIngredients } from '@services/slices/ingredients-slice';
-import { selectCurrentOrder, getOrderByNumber } from '@services/slices/order-slice';
+import {
+  selectCurrentOrder,
+  selectCurrentOrderLoading,
+  selectOrderError,
+  getOrderByNumber,
+} from '@services/slices/order-slice';
 import { useSelector, useDispatch } from '@services/store';
 
 import type { TIngredient } from '@utils-types';
@@ -13,10 +18,15 @@ export const OrderInfo = (): React.JSX.Element => {
   const dispatch = useDispatch();
   const { number } = useParams<{ number: string }>();
   const orderNumber = Number(number);
+  console.log('Параметр number:', number);
+  console.log('Число заказа:', orderNumber);
+  console.log('Текущий URL:', window.location.pathname);
 
   const feedOrders = useSelector(selectFeedOrders);
   const profileOrders = useSelector(selectProfileOrders);
   const currentOrder = useSelector(selectCurrentOrder);
+  const isLoading = useSelector(selectCurrentOrderLoading);
+  const error = useSelector(selectOrderError);
 
   const orderData =
     feedOrders.find((o) => o.number === orderNumber) ??
@@ -27,7 +37,7 @@ export const OrderInfo = (): React.JSX.Element => {
 
   useEffect(() => {
     if (!orderData && orderNumber) {
-      dispatch(getOrderByNumber(orderNumber));
+      void dispatch(getOrderByNumber(orderNumber));
     }
   }, [dispatch, orderData, orderNumber]);
 
@@ -71,8 +81,24 @@ export const OrderInfo = (): React.JSX.Element => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (isLoading) {
     return <Preloader />;
+  }
+
+  if (error) {
+    return <p>Не удалось загрузить заказ.</p>;
+  }
+
+  if (!orderInfo) {
+    return (
+      <div>
+        <p>Номер заказа: {number}</p>
+        <p>Заказ найден: {String(Boolean(orderData))}</p>
+        <p>Ингредиентов загружено: {ingredients.length}</p>
+        <p>Загрузка заказа: {String(isLoading)}</p>
+        <p>Ошибка: {error ?? 'нет'}</p>
+      </div>
+    );
   }
 
   return <OrderInfoUI orderInfo={orderInfo} />;

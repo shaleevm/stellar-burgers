@@ -1,8 +1,8 @@
 import { Preloader } from '@ui';
-import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
+import { useSelector } from '@services/store';
 
 type TLocationState = {
   from?: {

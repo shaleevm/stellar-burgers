@@ -16,8 +16,6 @@ import type { TUser } from '@utils-types';
 type TUserState = {
   user: TUser | null;
   isAuthChecked: boolean;
-  isAuthenticated: boolean;
-  isSuccessRegistration: boolean;
   isLoading: boolean;
   error: string | null;
 };
@@ -25,8 +23,6 @@ type TUserState = {
 const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
-  isAuthenticated: false,
-  isSuccessRegistration: false,
   isLoading: false,
   error: null,
 };
@@ -86,19 +82,15 @@ const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.isSuccessRegistration = false;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthChecked = true;
-        state.isAuthenticated = true;
-        state.isSuccessRegistration = true;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccessRegistration = false;
         state.error = action.error.message ?? 'Ошибка регистрации';
       })
 
@@ -110,7 +102,6 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthChecked = true;
-        state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -126,14 +117,12 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthChecked = true;
-        state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(getUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthChecked = true;
-        state.isAuthenticated = false;
         state.error = null;
       })
 
@@ -157,9 +146,7 @@ const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
-        state.isAuthenticated = false;
         state.isAuthChecked = true;
-        state.isSuccessRegistration = false;
         state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
@@ -171,8 +158,6 @@ const userSlice = createSlice({
     selectUser: (state) => state.user,
     selectUserName: (state) => state.user?.name ?? undefined,
     selectIsAuthChecked: (state) => state.isAuthChecked,
-    selectIsAuthenticated: (state) => state.isAuthenticated,
-    selectIsSuccessRegistration: (state) => state.isSuccessRegistration,
     selectUserIsLoading: (state) => state.isLoading,
     selectUserError: (state) => state.error,
   },
@@ -184,8 +169,6 @@ export const {
   selectUser,
   selectUserName,
   selectIsAuthChecked,
-  selectIsAuthenticated,
-  selectIsSuccessRegistration,
   selectUserIsLoading,
   selectUserError,
 } = userSlice.selectors;

@@ -6,7 +6,12 @@ import {
   selectConstructor,
   removeIngredientAll,
 } from '@services/slices/constructor-slice';
-import { clearOrderModal, createOrder } from '@services/slices/order-slice';
+import {
+  clearOrderModal,
+  createOrder,
+  selectOrderRequest,
+  selectOrderModalData,
+} from '@services/slices/order-slice';
 import { selectUser } from '@services/slices/user-slice';
 import { useDispatch, useSelector } from '@services/store';
 
@@ -18,17 +23,15 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
   const location = useLocation();
   const constructorItems: TConstructorState = useSelector(selectConstructor);
 
-  const orderRequest = useSelector((state) => state.order.orderRequest);
-  const orderModalData: TOrder | null = useSelector(
-    (state) => state.order.orderModalData
-  );
+  const orderRequest = useSelector(selectOrderRequest);
+  const orderModalData: TOrder | null = useSelector(selectOrderModalData);
   const user = useSelector(selectUser);
 
   const onOrderClick = (): void => {
     if (!constructorItems.bun || orderRequest) return;
 
     if (!user) {
-      navigate('/login', { state: { from: location } });
+      void navigate('/login', { state: { from: location } });
       return;
     }
 
@@ -38,7 +41,7 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
       constructorItems.bun._id,
     ];
 
-    dispatch(createOrder(ids))
+    void dispatch(createOrder(ids))
       .unwrap()
       .then(() => {
         dispatch(removeIngredientAll());

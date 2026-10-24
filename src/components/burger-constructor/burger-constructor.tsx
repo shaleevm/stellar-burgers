@@ -1,24 +1,58 @@
 import { BurgerConstructorUI } from '@ui';
 import { useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+import {
+  selectConstructor,
+  removeIngredientAll,
+} from '@services/slices/constructor-slice';
+import {
+  clearOrderModal,
+  createOrder,
+  selectOrderRequest,
+  selectOrderModalData,
+} from '@services/slices/order-slice';
+import { selectUser } from '@services/slices/user-slice';
+import { useDispatch, useSelector } from '@services/store';
 
 import type { TConstructorIngredient, TConstructorState, TOrder } from '@utils-types';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /** TODO: Взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const constructorItems: TConstructorState = {
-    bun: null,
-    ingredients: [],
-  };
-  const orderRequest = false;
-  const orderModalData: TOrder | null = null;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const constructorItems: TConstructorState = useSelector(selectConstructor);
+
+  const orderRequest = useSelector(selectOrderRequest);
+  const orderModalData: TOrder | null = useSelector(selectOrderModalData);
+  const user = useSelector(selectUser);
 
   const onOrderClick = (): void => {
     if (!constructorItems.bun || orderRequest) return;
-    // TODO: Оформить заказ
+
+    if (!user) {
+      void navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    const ids: string[] = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((item) => item._id),
+      constructorItems.bun._id,
+    ];
+
+    void dispatch(createOrder(ids))
+      .unwrap()
+      .then(() => {
+        dispatch(removeIngredientAll());
+      })
+      .catch((error) => {
+        console.error('Ошибка оформления заказа:', error);
+      });
   };
 
   const closeOrderModal = (): void => {
-    // TODO: Закрыть модальное окно и сбросить заказ
+    dispatch(clearOrderModal());
   };
 
   const price = useMemo(

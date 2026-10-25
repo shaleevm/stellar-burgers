@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "bun-test-001",
+    "name": "Тестовая булка",
+    "type": "bun",
+    "proteins": 10,
+    "fat": 5,
+    "carbohydrates": 20,
+    "calories": 200,
+    "price": 100,
+    "image": "https://example.com/bun.png",
+    "image_large": "https://example.com/bun-large.png",
+    "image_mobile": "https://example.com/bun-mobile.png"
+  },
+  {
+    "_id": "main-test-001",
+    "name": "Тестовая начинка",
+    "type": "main",
+    "proteins": 15,
+    "fat": 8,
+    "carbohydrates": 12,
+    "calories": 180,
+    "price": 150,
+    "image": "https://example.com/main.png",
+    "image_large": "https://example.com/main-large.png",
+    "image_mobile": "https://example.com/main-mobile.png"
+  }
+]

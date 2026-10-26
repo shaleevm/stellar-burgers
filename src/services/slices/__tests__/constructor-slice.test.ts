@@ -1,10 +1,12 @@
 
 import { describe, expect, it } from '@jest/globals';
+
 import reducer, {
   addIngredient,
   removeIngredient,
   removeIngredientAll,
-  moveIngredient
+  moveIngredient,
+  initialState
 } from '../constructor-slice';
 import type { TIngredient, TConstructorIngredient } from '@utils-types';
 
@@ -46,10 +48,7 @@ const createConstructorIngredient = (
 
 describe('burgerConstructor reducer', () => {
   it('возвращает начальное состояние для неизвестного экшена', () => {
-    expect(reducer(undefined, { type: 'UNKNOWN' })).toEqual({
-      bun: null,
-      ingredients: []
-    });
+    expect(reducer(undefined, { type: 'UNKNOWN' })).toEqual(initialState);
   });
 
   it('добавляет булку в конструктор', () => {
